@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const { generatePicks } = require('./research');
 const {
   createEntry,
   updateEntry,
@@ -18,6 +20,20 @@ const {
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// AI-powered research: web-searches today's slate and returns 3 suggested legs.
+// Does NOT save anything -- the frontend fills the form and the user still
+// reviews and confirms before it becomes a real draft/entry.
+app.post('/api/research', async (req, res) => {
+  const { date } = req.body;
+  if (!date) return res.status(400).json({ error: 'date is required' });
+  try {
+    const legs = await generatePicks(date);
+    res.json({ legs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // Suggested stake for the next entry (based on paroli progression)
 app.get('/api/next-stake', (req, res) => {

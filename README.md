@@ -27,13 +27,33 @@ You said Homebrew, Git, Node, VS Code, and Claude Code are already set up — th
 Your data lives in `threepear.db` (SQLite) right in the project folder — nothing leaves your machine.
 
 ## Daily workflow
-1. **Draft it early.** The night before (or whenever you start research), save your 3 legs as a **draft** — player names, teams, reasoning, whatever you've got. Drafts are fully editable and don't touch your stake progression.
-2. **Refine in the morning.** Once lineups/pitchers are confirmed, open the draft, hit **Edit**, update the legs, and save again.
-3. **Confirm & lock stake.** When you're ready to actually place the bet, hit **Confirm & lock stake** on the draft card. This snapshots the stake shown at that moment and starts counting toward your streak. Confirmed entries can no longer be edited — if you made a mistake, discard a draft before confirming, or delete a confirmed entry via the API if needed.
+1. **Draft it early.** Save your 3 legs as a **draft** — either type them in yourself, or click "🔎 Research today's picks" to have Claude fill them in for you (see below). Drafts are fully editable and don't touch your stake progression.
+2. **Refine if needed.** Once lineups/pitchers are confirmed, open the draft, hit **Edit**, update anything, and save again.
+3. **Confirm & lock stake.** When you're ready to actually place the bet, hit **Confirm & lock stake**. This snapshots the stake shown at that moment and starts counting toward your streak. Confirmed entries can no longer be edited — discard a draft before confirming if you made a mistake.
 4. **Grade it.** After the games finish, find the entry under History, mark each leg ✓ or ✗, then hit **Finalize day**.
 5. The dashboard updates your streak, next stake, and lifetime win rate automatically.
 
 **Why the draft/confirm split matters:** the $10 → $20 → $30 progression only advances off *confirmed* results. You can sketch out placeholder picks days in advance without accidentally messing up your stake math — nothing counts until you explicitly confirm it.
+
+## AI-powered research (optional)
+
+The **"🔎 Research today's picks"** button has Claude search the web for today's slate and auto-fill 3 legs for you to review — the same kind of research we've been doing together in chat, just automated.
+
+**One-time setup:**
+1. Create an API key at [console.anthropic.com](https://console.anthropic.com) (Settings → API Keys). This is separate from a Claude Pro subscription — it's pay-as-you-go billing, not a monthly plan.
+2. Add a small amount of credit to the account (a few dollars covers a long stretch at this usage level).
+3. In the `threepear` folder:
+   ```
+   cp .env.example .env
+   ```
+   Then open `.env` and paste your key in place of the placeholder.
+4. Restart the app (`pm2 restart threepear` if you're using pm2) so it picks up the new environment variable.
+
+**Cost:** each click does several web searches plus one Claude call — typically a few cents. Running it once a day for a month should only be a dollar or two total.
+
+**How it fits the workflow:** clicking Research fills in the leg fields but does *not* save anything automatically — you still review, edit anything that looks off, and hit **Save as draft** yourself. Nothing gets confirmed (and nothing touches your stake progression) until you explicitly confirm it.
+
+Your `.env` file is git-ignored, so your API key never ends up in your GitHub repo.
 
 ## Notes on the numbers
 - The "payout" shown on a win is a rough estimate (stake × 2.5, roughly what 3 legs at ~-150 each pays out) — swap in your actual FanDuel payout if you want it to be exact. That logic lives in `server.js` in the `/api/entries/:id/finalize` route if you want to tune it.
