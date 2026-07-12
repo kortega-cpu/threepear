@@ -28,6 +28,42 @@ function buildLegBlocks(prefill = null) {
   }
 }
 
+function pearIcon(status) {
+  const stemColor = '#5c4a33';
+  let bodyFill = '#6f8f4d'; // pending: growing, muted green
+  let extras = '';
+  let strokeAttr = '';
+
+  if (status === 'win') {
+    bodyFill = '#a8cf6e';
+    extras = '<ellipse cx="13" cy="16" rx="2.6" ry="3.6" fill="#ffffff" opacity="0.4"/>';
+  } else if (status === 'loss') {
+    bodyFill = '#7a6449';
+    extras = `
+      <circle cx="14" cy="15" r="1.3" fill="#3d3226"/>
+      <circle cx="21" cy="19" r="1" fill="#3d3226"/>
+      <circle cx="17" cy="25" r="1.2" fill="#3d3226"/>
+      <circle cx="12" cy="23" r="0.9" fill="#3d3226"/>
+    `;
+  } else if (status === 'draft') {
+    bodyFill = 'none';
+    strokeAttr = 'stroke="#5a6560" stroke-width="1.6" stroke-dasharray="3,2.5"';
+  }
+
+  return `
+    <svg viewBox="0 0 32 38" width="22" height="26" class="pear-icon pear-icon-${status}" aria-label="${status}">
+      <path d="M16 3 C 13 3 11 6 11 9" fill="none" stroke="${stemColor}" stroke-width="1.8" stroke-linecap="round"/>
+      <path d="M16 8
+               C 22.5 8 26 14 25 20.5
+               C 24 28.5 19.5 35 16 35
+               C 12.5 35 8 28.5 7 20.5
+               C 6 14 9.5 8 16 8 Z"
+            fill="${bodyFill}" ${strokeAttr} />
+      ${extras}
+    </svg>
+  `;
+}
+
 async function loadStake() {
   const res = await fetch('/api/next-stake');
   const { nextStake } = await res.json();
@@ -91,7 +127,10 @@ function renderEntry(entry) {
 
   card.innerHTML = `
     <div class="entry-head">
-      <div class="entry-date">${entry.date} · $${entry.stake}</div>
+      <div class="entry-date-row">
+        ${pearIcon(entry.result)}
+        <div class="entry-date">${entry.date} · $${entry.stake}</div>
+      </div>
       <div class="pill ${pillClass}">${entry.result}</div>
     </div>
     ${entry.legs
@@ -159,7 +198,10 @@ function renderDraft(entry) {
 
   card.innerHTML = `
     <div class="entry-head">
-      <div class="entry-date">${entry.date} · $${entry.stake}</div>
+      <div class="entry-date-row">
+        ${pearIcon('draft')}
+        <div class="entry-date">${entry.date} · $${entry.stake}</div>
+      </div>
       <div class="pill pill-draft">draft</div>
     </div>
     ${entry.legs
@@ -225,6 +267,44 @@ function cancelEditing() {
 }
 
 document.getElementById('cancelEditBtn').addEventListener('click', cancelEditing);
+
+const researchBtn = document.getElementById('researchBtn');
+const researchStatus = document.getElementById('researchStatus');
+
+researchBtn.addEventListener('click', async () => {
+  const date = entryForm.date.value;
+  if (!date) {
+    alert('Pick a date first.');
+    return;
+  }
+
+  researchBtn.disabled = true;
+  researchBtn.textContent = '🔎 Researching... (can take up to a minute)';
+  researchStatus.hidden = true;
+  researchStatus.className = 'research-status';
+
+  try {
+    const res = await fetch('/api/research', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Research failed');
+
+    buildLegBlocks(data.legs);
+    researchStatus.textContent =
+      'Filled in below \u2014 review before saving as a draft.';
+    researchStatus.hidden = false;
+  } catch (err) {
+    researchStatus.textContent = err.message;
+    researchStatus.className = 'research-status error';
+    researchStatus.hidden = false;
+  } finally {
+    researchBtn.disabled = false;
+    researchBtn.textContent = "🔎 Research today's picks";
+  }
+});
 
 entryForm.addEventListener('submit', async (e) => {
   e.preventDefault();

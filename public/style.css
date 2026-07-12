@@ -189,6 +189,12 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   align-items: center;
   margin-bottom: 0.5rem;
 }
+.entry-date-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.pear-icon { flex-shrink: 0; }
 .entry-date { font-weight: 700; }
 .pill {
   font-size: 0.72rem;
@@ -258,6 +264,23 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
   cursor: pointer;
 }
 .link-btn:hover { background: none; color: var(--pear-dim); }
+
+.research-btn {
+  background: var(--panel-2);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+}
+.research-btn:hover { background: rgba(224,179,77,0.1); }
+.research-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.research-status {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: -0.4rem 0 0;
+}
+.research-status.error { color: var(--red); }
 
 .pill-draft { background: rgba(154,163,154,0.18); color: var(--text-dim); }
 
