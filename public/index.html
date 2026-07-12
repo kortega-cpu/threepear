@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ThreePear</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">🍐</span>
+      <span class="brand-name">ThreePear</span>
+    </div>
+    <div class="tagline">3 legs. 1.5 H+R+RBI. Every day.</div>
+  </header>
+
+  <main>
+    <section class="stake-panel">
+      <div class="stake-card">
+        <div class="stake-label">Next stake</div>
+        <div class="stake-value" id="nextStake">$--</div>
+        <div class="stake-sub" id="streakNote">loading…</div>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat"><div class="stat-num" id="statDays">--</div><div class="stat-label">Days</div></div>
+        <div class="stat"><div class="stat-num" id="statWinRate">--</div><div class="stat-label">Win rate</div></div>
+        <div class="stat"><div class="stat-num" id="statNet">--</div><div class="stat-label">Net</div></div>
+      </div>
+    </section>
+
+    <section class="entry-form-section">
+      <h2>Today's picks</h2>
+      <form id="entryForm">
+        <div class="form-row">
+          <label>Date
+            <input type="date" name="date" required />
+          </label>
+          <label>Stake ($)
+            <input type="number" name="stake" step="1" min="10" required />
+          </label>
+        </div>
+
+        <div class="legs" id="legsContainer">
+          <!-- 3 leg blocks injected by app.js -->
+        </div>
+
+        <label class="notes-label">Notes
+          <textarea name="notes" rows="2" placeholder="Weather, lineup changes, why you like the spot..."></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button type="submit" id="saveDraftBtn">Save as draft</button>
+        </div>
+        <p class="form-hint" id="editingHint" hidden>
+          Editing an existing draft — saving will update it in place.
+          <button type="button" id="cancelEditBtn" class="link-btn">Cancel edit</button>
+        </p>
+      </form>
+    </section>
+
+    <section class="drafts-section">
+      <h2>Drafts <span class="section-sub">— editable, not yet locked in</span></h2>
+      <div id="draftsList" class="history-list">
+        <p class="empty">No drafts yet.</p>
+      </div>
+    </section>
+
+    <section class="history-section">
+      <h2>History <span class="section-sub">— confirmed picks</span></h2>
+      <div id="historyList" class="history-list">
+        <p class="empty">No entries yet — log today's picks above to start the run.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

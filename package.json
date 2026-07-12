@@ -1,0 +1,16 @@
+{
+  "name": "threepear",
+  "version": "1.0.0",
+  "description": "Daily 3-leg H+R+RBI parlay tracker with paroli staking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  }
+}
